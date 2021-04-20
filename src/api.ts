@@ -30,6 +30,17 @@ export class API {
         return result.Items as Event[]
     }
 
+    async getUserEvents(userId: string): Promise<Event[]> {
+        const result = await this.client.query({
+            TableName: this.eventsTable,
+            KeyConditionExpression: 'userId = :userId',
+            ExpressionAttributeValues: {
+                ':userId': userId
+            }
+        }).promise()
+        return result.Items as Event[]
+    }
+
     // async getTodo(userId: string, todoId: string): Promise<Event> {
     //     const result = await this.client.query({
     //         TableName: this.table,

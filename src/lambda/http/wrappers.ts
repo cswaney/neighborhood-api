@@ -37,6 +37,13 @@ export async function getEvents(location: string): Promise<Event[]> {
     return events
 }
 
+export async function getUserEvents(userId: string): Promise<Event[]> {
+    logger.info(`Getting events (userId=${userId})`)
+    const events = await api.getUserEvents(userId)
+    logger.info('Found events', { 'data': events })
+    return events
+}
+
 // export async function getTodo(todoId: string, token: string): Promise<Event> {
 //     const userId = parseUserId(token)
 //     return await api.getTodo(userId, todoId)

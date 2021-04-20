@@ -12,7 +12,7 @@ provider:
   region: ${opt:region, 'us-east-1'}
   environment:
     EVENTS_TABLE: Events-${self:provider.stage}
-    EVENT_ID_INDEX: EventIdIndex
+    EVENT_LOCATION_INDEX: EventIdIndex
     ATTACHMENTS_S3_BUCKET: neighborhood-api-attachments-${self:provider.stage}
 
 functions:
@@ -29,6 +29,19 @@ functions:
       - http:
           method: get
           path: events/{location}
+          # authorizer: Auth
+          cors: true
+  GetUserEvents:
+    handler: src/lambda/http/getUserEvents.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EVENTS_TABLE}
+    events:
+      - http:
+          method: get
+          path: events/user/{userId}
           # authorizer: Auth
           cors: true
 
@@ -52,7 +65,7 @@ resources:
           - AttributeName: createdAt
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: ${self:provider.environment.EVENTS_ID_INDEX}
+          - IndexName: ${self:provider.environment.EVENT_LOCATION_INDEX}
             KeySchema:
             - AttributeName: location
               KeyType: HASH
