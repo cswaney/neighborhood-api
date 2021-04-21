@@ -4,13 +4,15 @@ import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 const XAWS = AWSXRAY.captureAWS(AWS)
 
 import { Event } from './models/Event'
+import { User } from './models/User'
 
 export class API {
 
     constructor(
         private readonly client: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
         private readonly eventsTable = process.env.EVENTS_TABLE,
-        private readonly eventsLocationIdIndex = process.env.EVENT_LOCATION_ID_INDEX) {}
+        private readonly eventLocationIdIndex = process.env.EVENT_LOCATION_ID_INDEX,
+        private readonly usersTable = process.env.USERS_TABLE) {}
 
     // async createTodo(item: Event): Promise<Event> {
     //     await this.client.put({
@@ -23,7 +25,7 @@ export class API {
     async getEvents(locationId: string): Promise<Event[]> {
         const result = await this.client.query({
             TableName: this.eventsTable,
-            IndexName: this.eventsLocationIdIndex,
+            IndexName: this.eventLocationIdIndex,
             KeyConditionExpression: 'locationId = :locationId',
             ExpressionAttributeValues: {
                 ':locationId': locationId
@@ -41,6 +43,17 @@ export class API {
             }
         }).promise()
         return result.Items as Event[]
+    }
+
+    async getUser(userId: string): Promise<User[]> {
+        const result = await this.client.query({
+            TableName: this.usersTable,
+            KeyConditionExpression: 'userId = :userId',
+            ExpressionAttributeValues: {
+                ':userId': userId
+            }
+        }).promise()
+        return result.Items as User[]
     }
 
     // async getTodo(userId: string, todoId: string): Promise<Event> {

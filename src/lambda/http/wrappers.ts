@@ -2,6 +2,7 @@
 
 import { API } from '../../api'
 import { Event } from '../../models/Event'
+import { User } from '../../models/User'
 
 // import { CreateTodoRequest } from '../requests/CreateTodoRequest'
 // import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
@@ -42,6 +43,13 @@ export async function getUserEvents(userId: string): Promise<Event[]> {
     const events = await api.getUserEvents(userId)
     logger.info('Found events', { 'data': events })
     return events
+}
+
+export async function getUser(userId: string): Promise<User[]> {
+    logger.info(`Getting user info (userId=${userId})`)
+    const info = await api.getUser(userId)
+    logger.info('Found info', { 'data': info })
+    return info
 }
 
 // export async function getTodo(todoId: string, token: string): Promise<Event> {
