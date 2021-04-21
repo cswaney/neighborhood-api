@@ -5,6 +5,7 @@ const XAWS = AWSXRAY.captureAWS(AWS)
 
 import { Event } from './models/Event'
 import { User } from './models/User'
+import { Comment } from './models/Comment'
 
 export class API {
 
@@ -12,7 +13,9 @@ export class API {
         private readonly client: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
         private readonly eventsTable = process.env.EVENTS_TABLE,
         private readonly eventLocationIdIndex = process.env.EVENT_LOCATION_ID_INDEX,
-        private readonly usersTable = process.env.USERS_TABLE) {}
+        private readonly usersTable = process.env.USERS_TABLE,
+        private readonly commentsTable = process.env.COMMENTS_TABLE,
+        private readonly commentEventIdIndex = process.env.COMMENT_EVENT_ID_INDEX) {}
 
     // async createTodo(item: Event): Promise<Event> {
     //     await this.client.put({
@@ -54,6 +57,18 @@ export class API {
             }
         }).promise()
         return result.Items as User[]
+    }
+
+    async getComments(eventId: string): Promise<Comment[]> {
+        const result = await this.client.query({
+            TableName: this.commentsTable,
+            IndexName: this.commentEventIdIndex,
+            KeyConditionExpression: 'eventId = :eventId',
+            ExpressionAttributeValues: {
+                ':eventId': eventId
+            }
+        }).promise()
+        return result.Items as Comment[]
     }
 
     // async getTodo(userId: string, todoId: string): Promise<Event> {

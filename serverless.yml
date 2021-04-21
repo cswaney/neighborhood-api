@@ -15,6 +15,8 @@ provider:
     EVENT_LOCATION_ID_INDEX: EventLocationIdIndex
     USERS_TABLE: Users-${self:provider.stage}
     USER_LOCATION_ID_INDEX: UserLocationIdIndex
+    COMMENTS_TABLE: Comments-${self:provider.stage}
+    COMMENT_EVENT_ID_INDEX: CommentEventIdIndex
     ATTACHMENTS_S3_BUCKET: neighborhood-api-attachments-${self:provider.stage}
 
 functions:
@@ -61,6 +63,23 @@ functions:
       - http:
           method: get
           path: user/{userId}
+          # authorizer: Auth
+          cors: true
+  GetComments:
+    handler: src/lambda/http/getComments.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COMMENTS_TABLE}
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COMMENTS_TABLE}/index/${self:provider.environment.COMMENT_EVENT_ID_INDEX}
+    events:
+      - http:
+          method: get
+          path: thread/{eventId}
           # authorizer: Auth
           cors: true
 
@@ -111,6 +130,30 @@ resources:
           - IndexName: ${self:provider.environment.USER_LOCATION_ID_INDEX}
             KeySchema:
             - AttributeName: locationId
+              KeyType: HASH
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+    CommentsDynamoDBTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.COMMENTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: commentId
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+          - AttributeName: eventId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: commentId
+            KeyType: HASH
+          - AttributeName: createdAt
+            KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: ${self:provider.environment.COMMENT_EVENT_ID_INDEX}
+            KeySchema:
+            - AttributeName: eventId
               KeyType: HASH
             Projection:
               ProjectionType: ALL
