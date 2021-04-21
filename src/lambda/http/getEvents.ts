@@ -7,8 +7,8 @@ import { getEvents } from './wrappers'
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
     // const token = getAuthToken(event)
-    const location = event.pathParameters.location
-    const events = await getEvents(location)
+    const locationId = event.pathParameters.locationId
+    const events = await getEvents(locationId)
     
     return {
         statusCode: 200,

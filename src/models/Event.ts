@@ -1,8 +1,10 @@
 export interface Event {
-    createdAt: string
     userId: string
-    location: string
+    createdAt: string
+    locationId: string
+    locationName: string
     name: string
+    description: string
     date: string
     address: string
 }

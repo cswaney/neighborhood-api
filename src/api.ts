@@ -9,7 +9,8 @@ export class API {
 
     constructor(
         private readonly client: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
-        private readonly eventsTable = process.env.EVENTS_TABLE) {}
+        private readonly eventsTable = process.env.EVENTS_TABLE,
+        private readonly eventsLocationIdIndex = process.env.EVENT_LOCATION_ID_INDEX) {}
 
     // async createTodo(item: Event): Promise<Event> {
     //     await this.client.put({
@@ -19,12 +20,13 @@ export class API {
     //     return item
     // }
 
-    async getEvents(location: string): Promise<Event[]> {
+    async getEvents(locationId: string): Promise<Event[]> {
         const result = await this.client.query({
             TableName: this.eventsTable,
-            KeyConditionExpression: 'location = :location',
+            IndexName: this.eventsLocationIdIndex,
+            KeyConditionExpression: 'locationId = :locationId',
             ExpressionAttributeValues: {
-                ':location': location
+                ':locationId': locationId
             }
         }).promise()
         return result.Items as Event[]

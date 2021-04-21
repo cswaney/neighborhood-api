@@ -30,9 +30,9 @@ const logger = createLogger('http')
 //     return item
 // }
 
-export async function getEvents(location: string): Promise<Event[]> {
-    logger.info(`Getting events (location=${location})`)
-    const events = await api.getEvents(location)
+export async function getEvents(locationId: string): Promise<Event[]> {
+    logger.info(`Getting events (locationId=${locationId})`)
+    const events = await api.getEvents(locationId)
     logger.info('Found events', { 'data': events })
     return events
 }
