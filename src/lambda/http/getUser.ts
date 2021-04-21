@@ -10,6 +10,8 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
     const userId = event.pathParameters.userId
     const info = await getUser(userId)
 
+    // TODO: check if there was a result...
+
     return {
         statusCode: 200,
         headers: {
@@ -17,7 +19,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
             'Access-Control-Allow-Credentials': true
         },
         body: JSON.stringify({
-            info: info
+            info: info[0]
         })
     }
 }
