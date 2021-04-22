@@ -2,13 +2,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult, APIGatewayProxyHandler } f
 import 'source-map-support/register'
 
 // import { getAuthToken } from '../utils'
-import { getEvents } from './wrappers'
+import { getLocationEvents } from './wrappers'
 
 export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
     // const token = getAuthToken(event)
     const locationId = event.pathParameters.locationId
-    const events = await getEvents(locationId)
+    const events = await getLocationEvents(locationId)
     
     return {
         statusCode: 200,

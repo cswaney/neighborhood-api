@@ -13,6 +13,7 @@ export class API {
         private readonly client: DocumentClient = new XAWS.DynamoDB.DocumentClient(),
         private readonly eventsTable = process.env.EVENTS_TABLE,
         private readonly eventLocationIdIndex = process.env.EVENT_LOCATION_ID_INDEX,
+        private readonly eventUserIdIndex = process.env.EVENT_USER_ID_INDEX,
         private readonly usersTable = process.env.USERS_TABLE,
         private readonly commentsTable = process.env.COMMENTS_TABLE,
         private readonly commentEventIdIndex = process.env.COMMENT_EVENT_ID_INDEX) {}
@@ -25,7 +26,32 @@ export class API {
         return event
     }
 
-    async getEvents(locationId: string): Promise<Event[]> {
+    async deleteEvent(event: Event): Promise<Event> {
+        const id = event.id;
+        const createdAt = event.createdAt;
+        await this.client.delete({
+            TableName: this.eventsTable,
+            Key: {
+                id,
+                createdAt,
+            }
+        }).promise()
+        return event
+    }
+
+    async getEvent(eventId: string): Promise<Event> {
+        const result = await this.client.query({
+            TableName: this.eventsTable,
+            KeyConditionExpression: 'id = :id',
+            ExpressionAttributeValues: {
+                ':id': eventId
+            }
+        }).promise()
+        // TODO: check that a single event is returned
+        return result.Items[0] as Event
+    }
+
+    async getLocationEvents(locationId: string): Promise<Event[]> {
         const result = await this.client.query({
             TableName: this.eventsTable,
             IndexName: this.eventLocationIdIndex,
@@ -40,6 +66,7 @@ export class API {
     async getUserEvents(userId: string): Promise<Event[]> {
         const result = await this.client.query({
             TableName: this.eventsTable,
+            IndexName: this.eventUserIdIndex,
             KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues: {
                 ':userId': userId
@@ -104,23 +131,6 @@ export class API {
     //         }
     //     }).promise()
     //     return update
-    // }
-
-    // async deleteTodo(item: Event): Promise<Event> {
-    //     const userId = item.userId
-    //     const createdAt = item.createdAt
-    //     await this.client.delete({
-    //         TableName: this.table,
-    //         Key: {
-    //             userId,
-    //             createdAt,
-    //         },
-    //         ConditionExpression: 'todoId = :todoId',
-    //         ExpressionAttributeValues: {
-    //             ':todoId': item.todoId
-    //         }
-    //     }).promise()
-    //     return item
     // }
 
 }

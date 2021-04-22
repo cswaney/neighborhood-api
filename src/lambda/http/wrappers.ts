@@ -34,9 +34,21 @@ export async function createEvent(request: CreateEventRequest): Promise<Event> {
     return event
 }
 
-export async function getEvents(locationId: string): Promise<Event[]> {
+export async function deleteEvent(eventId: string): Promise<Event> {
+    logger.info(`Deleting item (eventId=${eventId})`);
+    const event = await api.getEvent(eventId)  // required to get `createdAt` used by delete
+    if (event) {
+        logger.info('Found matching event', { 'data': event })
+        return await api.deleteEvent(event)
+    } else {
+        logger.info('Unable to find matching event')
+        return event
+    }
+}
+
+export async function getLocationEvents(locationId: string): Promise<Event[]> {
     logger.info(`Getting events (locationId=${locationId})`)
-    const events = await api.getEvents(locationId)
+    const events = await api.getLocationEvents(locationId)
     logger.info('Found events', { 'data': events })
     return events
 }
@@ -77,19 +89,6 @@ export async function getComments(eventId: string): Promise<Comment[]> {
 //     if (item) {
 //         logger.info('Found matching item', { 'data': item })
 //         return await api.updateTodo(item)
-//     } else {
-//         logger.info('Unable to find matching item')
-//         return item
-//     }
-// }
-
-// export async function deleteTodo(todoId: string, token: string): Promise<Event> {
-//     logger.info(`Deleting item (todoId=${todoId})`)
-//     const userId = parseUserId(token)
-//     const item = await api.getTodo(userId, todoId)  // required to get `createdAt` used by delete
-//     if (item) {
-//         logger.info('Found matching item', { 'data': item })
-//         return await api.deleteTodo(item)
 //     } else {
 //         logger.info('Unable to find matching item')
 //         return item
