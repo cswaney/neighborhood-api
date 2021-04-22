@@ -22,6 +22,19 @@ provider:
 functions:
   # Auth:
   #   handler: src/lambda/auth/auth0Authorizer.handler
+  CreateEvent:
+    handler: src/lambda/http/createEvent.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:PutItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EVENTS_TABLE}
+    events:
+      - http:
+          method: post
+          path: events
+          # authorizer: Auth
+          cors: true
   GetEvents:
     handler: src/lambda/http/getEvents.handler
     iamRoleStatements:

@@ -1,6 +1,4 @@
-export interface Event {
-    id: string
-    createdAt: string
+export interface CreateEventRequest {
     name: string
     description: string
     locationId: string
@@ -8,5 +6,4 @@ export interface Event {
     address: string
     date: string
     userId: string
-    attachmentUrl: string
 }

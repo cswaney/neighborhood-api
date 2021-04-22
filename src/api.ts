@@ -17,13 +17,13 @@ export class API {
         private readonly commentsTable = process.env.COMMENTS_TABLE,
         private readonly commentEventIdIndex = process.env.COMMENT_EVENT_ID_INDEX) {}
 
-    // async createTodo(item: Event): Promise<Event> {
-    //     await this.client.put({
-    //         TableName: this.table,
-    //         Item: item
-    //     }).promise()
-    //     return item
-    // }
+    async createEvent(event: Event): Promise<Event> {
+        await this.client.put({
+            TableName: this.eventsTable,
+            Item: event
+        }).promise()
+        return event
+    }
 
     async getEvents(locationId: string): Promise<Event[]> {
         const result = await this.client.query({

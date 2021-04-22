@@ -1,36 +1,38 @@
-// import * as uuid from 'uuid'
+import * as uuid from 'uuid'
 
 import { API } from '../../api'
 import { Event } from '../../models/Event'
 import { User } from '../../models/User'
 import { Comment } from '../../models/Comment'
 
-// import { CreateTodoRequest } from '../requests/CreateTodoRequest'
+import { CreateEventRequest } from '../../requests/CreateEventRequest'
 // import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
 // import { parseUserId } from '../../auth/utils'
 import { createLogger } from '../../utils/logger'
 
 const api = new API()
 const logger = createLogger('http')
-// const bucketName = process.env.ATTACHMENTS_S3_BUCKET
+const bucketName = process.env.ATTACHMENTS_S3_BUCKET
 
-// export async function createTodo(token: string, request: CreateTodoRequest): Promise<Event> {
-//     const userId = parseUserId(token)
-//     const createdAt = new Date().toISOString()
-//     const todoId = uuid.v4()
-//     logger.info(`Creating an item (userid=${userId})`)
-//     const item = await api.createTodo({
-//         userId: userId,
-//         todoId: todoId,
-//         createdAt: createdAt,
-//         name: request.name,
-//         dueDate: request.dueDate,
-//         done: false,
-//         attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${todoId}`
-//     })
-//     logger.info('Created item', { 'data': item })
-//     return item
-// }
+export async function createEvent(request: CreateEventRequest): Promise<Event> {
+    const id = uuid.v4()
+    const createdAt = new Date().toISOString()
+    logger.info(`Creating an event (userid=${request.userId})`)
+    const event = await api.createEvent({
+        id: id,
+        createdAt: createdAt,
+        name: request.name,
+        description: request.description,
+        locationId: request.locationId,
+        locationName: request.locationName,
+        address: request.address,
+        date: request.date,
+        userId: request.userId,
+        attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${id}`
+    })
+    logger.info('Created event', { 'data': event })
+    return event
+}
 
 export async function getEvents(locationId: string): Promise<Event[]> {
     logger.info(`Getting events (locationId=${locationId})`)
