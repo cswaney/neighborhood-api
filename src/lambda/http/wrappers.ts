@@ -47,6 +47,13 @@ export async function deleteEvent(eventId: string): Promise<Event> {
     }
 }
 
+export async function getEvent(eventId: string): Promise<Event> {
+    logger.info(`Getting event info (eventId=${eventId})`)
+    const info = await api.getEvent(eventId)
+    logger.info('Found event info', { 'data': info })
+    return info
+}
+
 export async function getLocationEvents(locationId: string): Promise<Event[]> {
     logger.info(`Getting events (locationId=${locationId})`)
     const events = await api.getLocationEvents(locationId)

@@ -50,6 +50,19 @@ functions:
           path: events/{eventId}
           # authorizer: Auth
           cors: true
+  GetEvent:
+    handler: src/lambda/http/getEvent.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EVENTS_TABLE}
+    events:
+      - http:
+          method: get
+          path: events/{eventId}
+          # authorizer: Auth
+          cors: true
   GetLocationEvents:
     handler: src/lambda/http/getLocationEvents.handler
     iamRoleStatements:
