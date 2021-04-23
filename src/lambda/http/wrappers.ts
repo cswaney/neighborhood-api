@@ -7,7 +7,7 @@ import { Comment } from '../../models/Comment'
 
 import { CreateEventRequest } from '../../requests/CreateEventRequest'
 import { CreateCommentRequest } from '../../requests/CreateCommentRequest'
-// import { UpdateTodoRequest } from '../requests/UpdateTodoRequest'
+import { UpdateCommentRequest } from '../../requests/UpdateCommentRequest'
 // import { parseUserId } from '../../auth/utils'
 import { createLogger } from '../../utils/logger'
 
@@ -75,6 +75,7 @@ export async function createComment(request: CreateCommentRequest): Promise<Comm
     const comment = await api.createComment({
         id: id,
         createdAt: createdAt,
+        updatedAt: createdAt,
         eventId: request.eventId,
         userId: request.userId,
         userName: request.userName,
@@ -86,11 +87,24 @@ export async function createComment(request: CreateCommentRequest): Promise<Comm
 }
 
 export async function deleteComment(commentId: string): Promise<Comment> {
-    logger.info(`Deleting item (commentId=${commentId})`);
+    logger.info(`Deleting comment (commentId=${commentId})`);
     const comment = await api.getComment(commentId)  // required to get `createdAt` used by delete
     if (comment) {
         logger.info('Found matching comment', { 'data': comment })
         return await api.deleteComment(comment)
+    } else {
+        logger.info('Unable to find matching comment')
+        return comment
+    }
+}
+
+export async function updateComment(commentId: string, request: UpdateCommentRequest): Promise<Comment> {
+    logger.info(`Updating comment (commentId=${commentId})`);
+    const comment = await api.getComment(commentId)  // required to get `createdAt` used by delete
+    if (comment) {
+        logger.info('Found matching comment', { 'data': comment })
+        comment.text = request.text
+        return await api.updateComment(comment)
     } else {
         logger.info('Unable to find matching comment')
         return comment

@@ -107,6 +107,28 @@ export class API {
         return comment
     }
 
+    async updateComment(update: Comment): Promise<Comment> {
+        const id = update.id
+        const createdAt = update.createdAt
+        await this.client.update({
+            TableName: this.commentsTable,
+            Key: {
+                id,
+                createdAt,
+            },
+            UpdateExpression: 'set updatedAt = :updatedAt, #text = :text',
+            // ConditionExpression: 'eventId = :eventId',
+            ExpressionAttributeValues: {
+                ':updatedAt': update.updatedAt,
+                ':text': update.text,
+            },
+            ExpressionAttributeNames: {
+                '#text': 'text'
+            }
+        }).promise()
+        return update
+    }
+
     async getComment(commentId: string): Promise<Comment> {
         const result = await this.client.query({
             TableName: this.commentsTable,

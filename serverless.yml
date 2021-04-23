@@ -124,6 +124,20 @@ functions:
           path: comment/{commentId}
           # authorizer: Auth
           cors: true  
+  UpdateComment:
+    handler: src/lambda/http/updateComment.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COMMENTS_TABLE}
+    events:
+      - http:
+          method: patch
+          path: comment/{commentId}
+          # authorizer: Auth
+          cors: true  
   GetComments:
     handler: src/lambda/http/getComments.handler
     iamRoleStatements:
