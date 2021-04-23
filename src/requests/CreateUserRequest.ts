@@ -1,8 +1,7 @@
-export interface User {
+export interface CreateUserRequest {
     id: string
-    createdAt: string
+    name: string
     locationId: string
     locationName: string
-    name: string
     avatarUrl: string
 }

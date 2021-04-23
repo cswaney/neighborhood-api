@@ -75,10 +75,18 @@ export class API {
         return result.Items as Event[]
     }
 
+    async createUser(user: User): Promise<User> {
+        await this.client.put({
+            TableName: this.usersTable,
+            Item: user
+        }).promise()
+        return user
+    }
+
     async getUser(userId: string): Promise<User[]> {
         const result = await this.client.query({
             TableName: this.usersTable,
-            KeyConditionExpression: 'userId = :userId',
+            KeyConditionExpression: 'id = :userId',
             ExpressionAttributeValues: {
                 ':userId': userId
             }
@@ -152,40 +160,5 @@ export class API {
         }).promise()
         return result.Items as Comment[]
     }
-
-    // async getTodo(userId: string, todoId: string): Promise<Event> {
-    //     const result = await this.client.query({
-    //         TableName: this.table,
-    //         KeyConditionExpression: 'userId = :userId',
-    //         ExpressionAttributeValues: {
-    //             ':userId': userId
-    //         }
-    //     }).promise()
-    //     return result.Items.filter(todo => todo.todoId == todoId)[0] as Event
-    // }
-
-    // async updateTodo(update: Event): Promise<Event> {
-    //     const userId = update.userId
-    //     const createdAt = update.createdAt
-    //     await this.client.update({
-    //         TableName: this.table,
-    //         Key: {
-    //             userId,
-    //             createdAt,
-    //         },
-    //         UpdateExpression: 'set #todo_name = :name, dueDate = :dueDate, done = :done',
-    //         ConditionExpression: 'todoId = :todoId',
-    //         ExpressionAttributeValues: {
-    //             ':todoId': update.todoId,
-    //             ':name': update.name,
-    //             ':dueDate': update.dueDate,
-    //             ':done': update.done
-    //         },
-    //         ExpressionAttributeNames: {
-    //             '#todo_name': 'name'
-    //         }
-    //     }).promise()
-    //     return update
-    // }
 
 }

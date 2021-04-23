@@ -8,6 +8,7 @@ import { Comment } from '../../models/Comment'
 import { CreateEventRequest } from '../../requests/CreateEventRequest'
 import { CreateCommentRequest } from '../../requests/CreateCommentRequest'
 import { UpdateCommentRequest } from '../../requests/UpdateCommentRequest'
+import { CreateUserRequest } from '../../requests/CreateUserRequest'
 // import { parseUserId } from '../../auth/utils'
 import { createLogger } from '../../utils/logger'
 
@@ -66,6 +67,21 @@ export async function getUserEvents(userId: string): Promise<Event[]> {
     const events = await api.getUserEvents(userId)
     logger.info('Found events', { 'data': events })
     return events
+}
+
+export async function createUser(request: CreateUserRequest): Promise<User> {
+    const createdAt = new Date().toISOString()
+    logger.info(`Creating a user (userid=${request.id})`)
+    const user = await api.createUser({
+        id: request.id,
+        createdAt: createdAt,
+        name: request.name,
+        locationId: request.locationId,
+        locationName: request.locationName,
+        avatarUrl: request.avatarUrl
+    })
+    logger.info('Created user', { 'data': user })
+    return user
 }
 
 export async function getUser(userId: string): Promise<User[]> {
