@@ -1,9 +1,7 @@
-export interface Comment {
-    id: string
-    createdAt: string
+export interface CreateCommentRequest {
     eventId: string
+    text: string
     userId: string
     userName: string
-    text: string
     avatarUrl: string
 }

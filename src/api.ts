@@ -86,6 +86,14 @@ export class API {
         return result.Items as User[]
     }
 
+    async createComment(comment: Comment): Promise<Comment> {
+        await this.client.put({
+            TableName: this.commentsTable,
+            Item: comment
+        }).promise()
+        return comment
+    }
+
     async getComments(eventId: string): Promise<Comment[]> {
         const result = await this.client.query({
             TableName: this.commentsTable,
