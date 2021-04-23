@@ -9,8 +9,9 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
     const request: CreateEventRequest = JSON.parse(event.body)
     // const token = getAuthToken(event)
-    const newEvent = await createEvent(request)
-
+    const response = await createEvent(request)
+    const newEvent = response[0];
+    const signedUrl = response[1];
     return {
         statusCode: 201,
         headers: {
@@ -19,6 +20,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
         },
         body: JSON.stringify({
             event: newEvent,
+            signedUrl: signedUrl
         })
     }
 }

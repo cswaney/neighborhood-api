@@ -2,6 +2,9 @@ import * as AWS from 'aws-sdk'
 const AWSXRAY = require('aws-xray-sdk')
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 const XAWS = AWSXRAY.captureAWS(AWS)
+const s3 = new XAWS.S3({
+    signatureVersion: 'v4'
+})
 
 import { Event } from './models/Event'
 import { User } from './models/User'
@@ -16,14 +19,23 @@ export class API {
         private readonly eventUserIdIndex = process.env.EVENT_USER_ID_INDEX,
         private readonly usersTable = process.env.USERS_TABLE,
         private readonly commentsTable = process.env.COMMENTS_TABLE,
-        private readonly commentEventIdIndex = process.env.COMMENT_EVENT_ID_INDEX) {}
+        private readonly commentEventIdIndex = process.env.COMMENT_EVENT_ID_INDEX,
+        private readonly attachmentsBucket = process.env.ATTACHMENTS_S3_BUCKET,
+        private readonly urlExpiration = process.env.SIGNED_URL_EXPIRATION) {}
 
-    async createEvent(event: Event): Promise<Event> {
+    async createEvent(event: Event): Promise<[Event, string]> {
+        // Put event into DynamoDB
         await this.client.put({
             TableName: this.eventsTable,
             Item: event
         }).promise()
-        return event
+        // Generate signed URL
+        const uploadUrl = await s3.getSignedUrl('putObject', {
+            Bucket: this.attachmentsBucket,
+            Key: event.id,
+            Expires: Number(this.urlExpiration)
+        })
+        return [event, uploadUrl]
     }
 
     async deleteEvent(event: Event): Promise<Event> {

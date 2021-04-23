@@ -17,11 +17,11 @@ const api = new API()
 const logger = createLogger('http')
 const bucketName = process.env.ATTACHMENTS_S3_BUCKET
 
-export async function createEvent(request: CreateEventRequest): Promise<Event> {
+export async function createEvent(request: CreateEventRequest): Promise<[Event, string]> {
     const id = uuid.v4()
     const createdAt = new Date().toISOString()
     logger.info(`Creating an event (userid=${request.userId})`)
-    const event = await api.createEvent({
+    const response = await api.createEvent({
         id: id,
         createdAt: createdAt,
         name: request.name,
@@ -33,8 +33,10 @@ export async function createEvent(request: CreateEventRequest): Promise<Event> {
         userId: request.userId,
         attachmentUrl: `https://${bucketName}.s3.amazonaws.com/${id}`
     })
+    const event = response[0];
+    const signedUrl = response[1];
     logger.info('Created event', { 'data': event })
-    return event
+    return [event, signedUrl]
 }
 
 export async function deleteEvent(eventId: string): Promise<Event> {
@@ -50,10 +52,10 @@ export async function deleteEvent(eventId: string): Promise<Event> {
 }
 
 export async function getEvent(eventId: string): Promise<Event> {
-    logger.info(`Getting event info (eventId=${eventId})`)
-    const info = await api.getEvent(eventId)
-    logger.info('Found event info', { 'data': info })
-    return info
+    logger.info(`Getting event (eventId=${eventId})`)
+    const event = await api.getEvent(eventId)
+    logger.info('Found event', { 'data': event })
+    return event
 }
 
 export async function getLocationEvents(locationId: string): Promise<Event[]> {
