@@ -83,7 +83,30 @@ export class API {
         return user
     }
 
-    async getUser(userId: string): Promise<User[]> {
+    async updateUser(update: User): Promise<User> {
+        const id = update.id
+        const createdAt = update.createdAt
+        await this.client.update({
+            TableName: this.usersTable,
+            Key: {
+                id,
+                createdAt,
+            },
+            UpdateExpression: 'set locationId = :locationId, locationName = :locationName, #name = :name, avatarUrl = :avatarUrl',
+            ExpressionAttributeValues: {
+                ':locationId': update.locationId,
+                ':locationName': update.locationName,
+                ':name': update.name,
+                ':avatarUrl': update.avatarUrl,
+            },
+            ExpressionAttributeNames: {
+                '#name': 'name'
+            }
+        }).promise()
+        return update
+    }
+
+    async getUser(userId: string): Promise<User> {
         const result = await this.client.query({
             TableName: this.usersTable,
             KeyConditionExpression: 'id = :userId',
@@ -91,7 +114,7 @@ export class API {
                 ':userId': userId
             }
         }).promise()
-        return result.Items as User[]
+        return result.Items[0] as User
     }
 
     async createComment(comment: Comment): Promise<Comment> {
@@ -125,7 +148,6 @@ export class API {
                 createdAt,
             },
             UpdateExpression: 'set updatedAt = :updatedAt, #text = :text',
-            // ConditionExpression: 'eventId = :eventId',
             ExpressionAttributeValues: {
                 ':updatedAt': update.updatedAt,
                 ':text': update.text,

@@ -9,6 +9,7 @@ import { CreateEventRequest } from '../../requests/CreateEventRequest'
 import { CreateCommentRequest } from '../../requests/CreateCommentRequest'
 import { UpdateCommentRequest } from '../../requests/UpdateCommentRequest'
 import { CreateUserRequest } from '../../requests/CreateUserRequest'
+import { UpdateUserRequest } from '../../requests/UpdateUserRequest'
 // import { parseUserId } from '../../auth/utils'
 import { createLogger } from '../../utils/logger'
 
@@ -84,11 +85,27 @@ export async function createUser(request: CreateUserRequest): Promise<User> {
     return user
 }
 
-export async function getUser(userId: string): Promise<User[]> {
-    logger.info(`Getting user info (userId=${userId})`)
-    const info = await api.getUser(userId)
-    logger.info('Found info', { 'data': info })
-    return info
+export async function updateUser(userId: string, request: UpdateUserRequest): Promise<User> {
+    logger.info(`Updating user (userId=${userId})`);
+    const user = await api.getUser(userId)
+    if (user) {
+        logger.info('Found matching user', { 'data': user })
+        user.locationId = request.locationId
+        user.locationName = request.locationName
+        user.name = request.name
+        user.avatarUrl = request.avatarUrl
+        return await api.updateUser(user)
+    } else {
+        logger.info('Unable to find matching user')
+        return user
+    }
+}
+
+export async function getUser(userId: string): Promise<User> {
+    logger.info(`Getting user (userId=${userId})`)
+    const user = await api.getUser(userId)
+    logger.info('Found user', { 'data': user })
+    return user
 }
 
 export async function createComment(request: CreateCommentRequest): Promise<Comment> {
@@ -140,24 +157,3 @@ export async function getComments(eventId: string): Promise<Comment[]> {
     logger.info('Found comments', { 'data': comments })
     return comments
 }
-
-// export async function getTodo(todoId: string, token: string): Promise<Event> {
-//     const userId = parseUserId(token)
-//     return await api.getTodo(userId, todoId)
-// }
-
-// export async function updateTodo(todoId: string, request: UpdateTodoRequest, token: string): Promise<Event> {
-//     logger.info(`Updating item (todoId=${todoId})`)
-//     const userId = parseUserId(token)
-//     const item = await api.getTodo(userId, todoId)  // required to get `createdAt` used by update
-//     for (let attribute in request) {
-//         item[attribute] = request[attribute]
-//     }
-//     if (item) {
-//         logger.info('Found matching item', { 'data': item })
-//         return await api.updateTodo(item)
-//     } else {
-//         logger.info('Unable to find matching item')
-//         return item
-//     }
-// }
