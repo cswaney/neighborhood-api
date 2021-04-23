@@ -107,7 +107,21 @@ functions:
     events:
       - http:
           method: post
-          path: thread
+          path: comment
+          # authorizer: Auth
+          cors: true  
+  DeleteComment:
+    handler: src/lambda/http/deleteComment.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:DeleteItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.COMMENTS_TABLE}
+    events:
+      - http:
+          method: delete
+          path: comment/{commentId}
           # authorizer: Auth
           cors: true  
   GetComments:

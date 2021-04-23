@@ -85,6 +85,18 @@ export async function createComment(request: CreateCommentRequest): Promise<Comm
     return comment
 }
 
+export async function deleteComment(commentId: string): Promise<Comment> {
+    logger.info(`Deleting item (commentId=${commentId})`);
+    const comment = await api.getComment(commentId)  // required to get `createdAt` used by delete
+    if (comment) {
+        logger.info('Found matching comment', { 'data': comment })
+        return await api.deleteComment(comment)
+    } else {
+        logger.info('Unable to find matching comment')
+        return comment
+    }
+}
+
 export async function getComments(eventId: string): Promise<Comment[]> {
     logger.info(`Getting events (eventId=${eventId})`)
     const comments = await api.getComments(eventId)

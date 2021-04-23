@@ -94,6 +94,31 @@ export class API {
         return comment
     }
 
+    async deleteComment(comment: Comment): Promise<Comment> {
+        const id = comment.id;
+        const createdAt = comment.createdAt;
+        await this.client.delete({
+            TableName: this.commentsTable,
+            Key: {
+                id,
+                createdAt,
+            }
+        }).promise()
+        return comment
+    }
+
+    async getComment(commentId: string): Promise<Comment> {
+        const result = await this.client.query({
+            TableName: this.commentsTable,
+            KeyConditionExpression: 'id = :id',
+            ExpressionAttributeValues: {
+                ':id': commentId
+            }
+        }).promise()
+        // TODO: check that a single event is returned
+        return result.Items[0] as Comment
+    }
+
     async getComments(eventId: string): Promise<Comment[]> {
         const result = await this.client.query({
             TableName: this.commentsTable,
