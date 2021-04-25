@@ -3,5 +3,4 @@ export interface CreateUserRequest {
     name: string
     locationId: string
     locationName: string
-    avatarUrl: string
 }

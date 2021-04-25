@@ -72,19 +72,21 @@ export async function getUserEvents(userId: string): Promise<Event[]> {
     return events
 }
 
-export async function createUser(request: CreateUserRequest): Promise<User> {
+export async function createUser(request: CreateUserRequest): Promise<[User, string]> {
     const createdAt = new Date().toISOString()
     logger.info(`Creating a user (userid=${request.id})`)
-    const user = await api.createUser({
+    const response = await api.createUser({
         id: request.id,
         createdAt: createdAt,
         name: request.name,
         locationId: request.locationId,
         locationName: request.locationName,
-        avatarUrl: request.avatarUrl
+        avatarUrl: `https://${bucketName}.s3.amazonaws.com/${request.id}`
     })
+    const user = response[0];
+    const signedUrl = response[1];
     logger.info('Created user', { 'data': user })
-    return user
+    return [user, signedUrl]
 }
 
 export async function updateUser(userId: string, request: UpdateUserRequest): Promise<User> {

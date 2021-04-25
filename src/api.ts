@@ -87,12 +87,19 @@ export class API {
         return result.Items as Event[]
     }
 
-    async createUser(user: User): Promise<User> {
+    async createUser(user: User): Promise<[User, string]> {
+        // Put user into DynamoDB
         await this.client.put({
             TableName: this.usersTable,
             Item: user
         }).promise()
-        return user
+        // Generate signed URL
+        const signedUrl = await s3.getSignedUrl('putObject', {
+            Bucket: this.attachmentsBucket,
+            Key: user.id,
+            Expires: Number(this.urlExpiration)
+        })
+        return [user, signedUrl]
     }
 
     async updateUser(update: User): Promise<User> {
