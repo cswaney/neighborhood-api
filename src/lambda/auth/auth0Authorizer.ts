@@ -8,7 +8,7 @@ import { JwtPayload } from '../../auth/JwtPayload'
 
 
 const logger = createLogger('auth')
-const jwksUrl = 'https://todo-serverless-dev.us.auth0.com/.well-known/jwks.json'
+const jwksUrl = 'https://neighborhood-staging.us.auth0.com/.well-known/jwks.json'
 
 
 export const handler = async (event: CustomAuthorizerEvent): Promise<CustomAuthorizerResult> => {

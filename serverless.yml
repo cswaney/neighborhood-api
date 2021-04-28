@@ -22,8 +22,8 @@ provider:
     SIGNED_URL_EXPIRATION: 300
 
 functions:
-  # Auth:
-  #   handler: src/lambda/auth/auth0Authorizer.handler
+  Auth:
+    handler: src/lambda/auth/auth0Authorizer.handler
   CreateEvent:
     handler: src/lambda/http/createEvent.handler
     iamRoleStatements:
@@ -40,7 +40,7 @@ functions:
       - http:
           method: post
           path: events
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   DeleteEvent:
     handler: src/lambda/http/deleteEvent.handler
@@ -54,7 +54,7 @@ functions:
       - http:
           method: delete
           path: events/{eventId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   GetEvent:
     handler: src/lambda/http/getEvent.handler
@@ -67,7 +67,7 @@ functions:
       - http:
           method: get
           path: events/{eventId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   GetLocationEvents:
     handler: src/lambda/http/getLocationEvents.handler
@@ -84,7 +84,7 @@ functions:
       - http:
           method: get
           path: events/location/{locationId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   GetUserEvents:
     handler: src/lambda/http/getUserEvents.handler
@@ -101,7 +101,7 @@ functions:
       - http:
           method: get
           path: events/user/{userId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   CreateUser:
     handler: src/lambda/http/createUser.handler
@@ -119,7 +119,7 @@ functions:
       - http:
           method: post
           path: user
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   UpdateUser:
     handler: src/lambda/http/updateUser.handler
@@ -133,7 +133,7 @@ functions:
       - http:
           method: patch
           path: user/{userId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true  
   GetUser:
     handler: src/lambda/http/getUser.handler
@@ -146,7 +146,7 @@ functions:
       - http:
           method: get
           path: user/{userId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
   CreateComment:
     handler: src/lambda/http/createComment.handler
@@ -159,7 +159,7 @@ functions:
       - http:
           method: post
           path: comment
-          # authorizer: Auth
+          authorizer: Auth
           cors: true  
   DeleteComment:
     handler: src/lambda/http/deleteComment.handler
@@ -173,7 +173,7 @@ functions:
       - http:
           method: delete
           path: comment/{commentId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true  
   UpdateComment:
     handler: src/lambda/http/updateComment.handler
@@ -187,7 +187,7 @@ functions:
       - http:
           method: patch
           path: comment/{commentId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true  
   GetComments:
     handler: src/lambda/http/getComments.handler
@@ -204,7 +204,7 @@ functions:
       - http:
           method: get
           path: thread/{eventId}
-          # authorizer: Auth
+          authorizer: Auth
           cors: true
 
 resources:
