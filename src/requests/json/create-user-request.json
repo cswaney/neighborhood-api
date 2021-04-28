@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "createUser",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "locationId": {
+            "type": "string"
+        },
+        "locationName": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "locationId",
+        "locationName"
+    ],
+    "additionalProperties": false
+}

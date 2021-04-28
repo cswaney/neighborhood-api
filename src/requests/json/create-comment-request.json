@@ -1,0 +1,30 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "createComment",
+    "type": "object",
+    "properties": {
+        "eventId": {
+            "type": "string"
+        },
+        "text": {
+            "type": "string"
+        },
+        "userId": {
+            "type": "string"
+        },
+        "userName": {
+            "type": "string"
+        },
+        "avatarUrl": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "eventId",
+        "text",
+        "userId",
+        "userName",
+        "avatarUrl"
+    ],
+    "additionalProperties": false
+}

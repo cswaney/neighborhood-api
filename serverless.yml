@@ -4,6 +4,8 @@ service:
 plugins:
   - serverless-webpack
   - serverless-iam-roles-per-function
+  - serverless-aws-documentation
+  - serverless-reqvalidator-plugin
 
 provider:
   name: aws
@@ -20,6 +22,30 @@ provider:
     COMMENT_EVENT_ID_INDEX: Neighborhood-CommentEventIdIndex
     ATTACHMENTS_S3_BUCKET: neighborhood-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+
+custom:
+  documentation:
+    api:
+      info:
+        version: v1.0.0
+        title: Neighborhood API
+        description: API for Neighborhood App
+    models:
+      - name: CreateCommentRequest
+        contentType: application/json
+        schema: ${file(src/requests/json/create-comment-request.json)}
+      - name: CreateEventRequest
+        contentType: application/json
+        schema: ${file(src/requests/json/create-event-request.json)}
+      - name: CreateUserRequest
+        contentType: application/json
+        schema: ${file(src/requests/json/create-user-request.json)}
+      - name: UpdateCommentRequest
+        contentType: application/json
+        schema: ${file(src/requests/json/update-comment-request.json)}
+      - name: UpdateUserRequest
+        contentType: application/json
+        schema: ${file(src/requests/json/update-user-request.json)}
 
 functions:
   Auth:
@@ -42,6 +68,12 @@ functions:
           path: events
           authorizer: Auth
           cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create an event
+            description: Create an event
+            requestModels:
+              'application/json': CreateEventRequest
   DeleteEvent:
     handler: src/lambda/http/deleteEvent.handler
     iamRoleStatements:
@@ -121,6 +153,12 @@ functions:
           path: user
           authorizer: Auth
           cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create user information
+            description: Create user information
+            requestModels:
+              'application/json': CreateUserRequest
   UpdateUser:
     handler: src/lambda/http/updateUser.handler
     iamRoleStatements:
@@ -134,7 +172,13 @@ functions:
           method: patch
           path: user/{userId}
           authorizer: Auth
-          cors: true  
+          cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update user information
+            description: Update user information
+            requestModels:
+              'application/json': UpdateUserRequest
   GetUser:
     handler: src/lambda/http/getUser.handler
     iamRoleStatements:
@@ -160,7 +204,13 @@ functions:
           method: post
           path: comment
           authorizer: Auth
-          cors: true  
+          cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Create a comment
+            description: Create a comment
+            requestModels:
+              'application/json': CreateCommentRequest 
   DeleteComment:
     handler: src/lambda/http/deleteComment.handler
     iamRoleStatements:
@@ -188,7 +238,13 @@ functions:
           method: patch
           path: comment/{commentId}
           authorizer: Auth
-          cors: true  
+          cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update comment text
+            description: Update comment text
+            requestModels:
+              'application/json': UpdateCommentRequest
   GetComments:
     handler: src/lambda/http/getComments.handler
     iamRoleStatements:
@@ -327,3 +383,23 @@ resources:
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENTS_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket  # attached to bucket allocated above
+    # Default API Gateway
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+          gatewayresponse.header.Access-Control-Allow-Methods: "'GET,OPTIONS,POST'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'    
+    # Request Validation
+    RequestBodyValidator:
+      Type: AWS::ApiGateway::RequestValidator
+      Properties:
+        Name: 'request-body-validator'
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        ValidateRequestBody: true
+        ValidateRequestParameters: false

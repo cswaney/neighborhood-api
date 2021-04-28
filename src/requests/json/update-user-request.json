@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "updateUser",
+    "type": "object",
+    "properties": {
+        "locationId": {
+            "type": "string"
+        },
+        "locationName": {
+            "type": "string"
+        },
+        "name": {
+            "type": "string"
+        },
+        "avatarUrl": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "name",
+        "locationId",
+        "locationName",
+        "avatarUrl"
+    ],
+    "additionalProperties": false
+}

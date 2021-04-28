@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "createEvent",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        },
+        "locationId": {
+            "type": "string"
+        },
+        "locationName": {
+            "type": "string"
+        },
+        "address": {
+            "type": "string"
+        },
+        "date": {
+            "type": "string"
+        },
+        "userId": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "name",
+        "description",
+        "locationId",
+        "locationName",
+        "address",
+        "date",
+        "userid"
+    ],
+    "additionalProperties": false
+}
