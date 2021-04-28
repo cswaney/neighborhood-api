@@ -32,7 +32,7 @@
         "locationName",
         "address",
         "date",
-        "userid"
+        "userId"
     ],
     "additionalProperties": false
 }

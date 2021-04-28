@@ -22,6 +22,9 @@ provider:
     COMMENT_EVENT_ID_INDEX: Neighborhood-CommentEventIdIndex
     ATTACHMENTS_S3_BUCKET: neighborhood-attachments-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
+  tracing:
+    lambda: true
+    apiGateway: true
 
 custom:
   documentation:
