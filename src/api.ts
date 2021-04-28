@@ -38,6 +38,30 @@ export class API {
         return [event, uploadUrl]
     }
 
+    async updateEvent(update: Event): Promise<Event> {
+        const id = update.id
+        const createdAt = update.createdAt
+        await this.client.update({
+            TableName: this.eventsTable,
+            Key: {
+                id,
+                createdAt,
+            },
+            UpdateExpression: 'set #name = :name, description = :description, address = :address, #date = :date',
+            ExpressionAttributeValues: {
+                ':name': update.name,
+                ':description': update.description,
+                ':address': update.address,
+                ':date': update.date,
+            },
+            ExpressionAttributeNames: {
+                '#name': 'name',
+                '#date': 'date'
+            }
+        }).promise()
+        return update
+    }
+
     async deleteEvent(event: Event): Promise<Event> {
         const id = event.id;
         const createdAt = event.createdAt;

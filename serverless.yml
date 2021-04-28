@@ -43,6 +43,9 @@ custom:
       - name: UpdateCommentRequest
         contentType: application/json
         schema: ${file(src/requests/json/update-comment-request.json)}
+      - name: UpdateEventRequest
+        contentType: application/json
+        schema: ${file(src/requests/json/update-event-request.json)}
       - name: UpdateUserRequest
         contentType: application/json
         schema: ${file(src/requests/json/update-user-request.json)}
@@ -74,6 +77,26 @@ functions:
             description: Create an event
             requestModels:
               'application/json': CreateEventRequest
+  UpdateEvent:
+    handler: src/lambda/http/updateEvent.handler
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Query
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.EVENTS_TABLE}
+    events:
+      - http:
+          method: patch
+          path: events/{eventId}
+          authorizer: Auth
+          cors: true
+          reqValidatorName: RequestBodyValidator
+          documentation:
+            summary: Update event information
+            description: Update event information
+            requestModels:
+              'application/json': UpdateEventRequest
   DeleteEvent:
     handler: src/lambda/http/deleteEvent.handler
     iamRoleStatements:

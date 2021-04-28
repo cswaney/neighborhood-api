@@ -6,6 +6,7 @@ import { User } from '../../models/User'
 import { Comment } from '../../models/Comment'
 
 import { CreateEventRequest } from '../../requests/CreateEventRequest'
+import { UpdateEventRequest } from '../../requests/UpdateEventRequest'
 import { CreateCommentRequest } from '../../requests/CreateCommentRequest'
 import { UpdateCommentRequest } from '../../requests/UpdateCommentRequest'
 import { CreateUserRequest } from '../../requests/CreateUserRequest'
@@ -56,6 +57,22 @@ export async function getEvent(eventId: string): Promise<Event> {
     const event = await api.getEvent(eventId)
     logger.info('Found event', { 'data': event })
     return event
+}
+
+export async function updateEvent(eventId: string, request: UpdateEventRequest): Promise<Event> {
+    logger.info(`Updating event (eventId=${eventId})`);
+    const event = await api.getEvent(eventId)
+    if (event) {
+        logger.info('Found matching event', { 'data': event })
+        event.name = request.name
+        event.description = request.description
+        event.address = request.address
+        event.date = request.date
+        return await api.updateEvent(event)
+    } else {
+        logger.info('Unable to find matching event')
+        return event
+    }
 }
 
 export async function getLocationEvents(locationId: string): Promise<Event[]> {
